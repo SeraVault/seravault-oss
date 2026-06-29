@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+dist-landing/
+dist-ssr/
+build/
+
+# Firebase
+.firebase/
+functions/node_modules/
+
+# Cache
+.cache/
+.parcel-cache/
+.npm/
+.eslintcache/
+
+# Coverage
+coverage/
+.nyc_output/
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Credentials / secrets (never index these)
+.env*
+*service-account*.json
+serviceAccountKey.json
+*.pem
+*.p12
+*.key
+firebase-config.sh

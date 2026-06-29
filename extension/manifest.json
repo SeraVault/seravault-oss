@@ -1,0 +1,49 @@
+{
+  "manifest_version": 3,
+  "name": "SeraVault Autofill",
+  "version": "1.0.0",
+  "description": "Autofill passwords and credentials from your SeraVault encrypted vault.",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2oKchp35SWyc7movjK1eUhmiuswC76UDBJkD4btljDUoI1U3y3khrh+jLoq25IOw9uwxCT2CGH0KdZdyTv0ymTXjaE+v8Obm8iBycCq+TvTCLUcVMDqxQZKzKaJPe+M8ofgkvCTuG0mp1vLIBo6/GVK4KzP55ve/TJQHfg23CY7FvuF2fw/bcBYrYmYzC6yWcBYGkDHVWoJl74ocomrcqjo99pqcMjb238RN7yZI7vpTAycUlFyiMykqQ+3Bek8CLuAX8njxky8bXP+Bglt8X84MkzDGacCguSxV9ZhOJy7xe9rU2gKjqRFqsWLNHJK+C4OQutfs07reuqkcfSrJEQIDAQAB",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png"
+    },
+    "default_title": "SeraVault Autofill"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting",
+    "identity"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["auth.html", "oauthPage.js"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'; frame-src https://YOUR-FIREBASE-PROJECT.firebaseapp.com https://accounts.google.com;"
+  }
+}

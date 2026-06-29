@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify Your Email - SeraVault</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f5f5f5;
+    }
+    .email-wrapper {
+      width: 100%;
+      padding: 20px 0;
+      background-color: #f5f5f5;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .header {
+      background: #000000;
+      color: white;
+      padding: 40px 30px;
+      text-align: center;
+    }
+    .header .logo-container {
+      display: block;
+      margin-bottom: 20px;
+    }
+    .header .logo {
+      width: 400px;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 600;
+    }
+    .header .icon {
+      font-size: 48px;
+      margin-bottom: 10px;
+    }
+    .content {
+      padding: 40px 30px;
+      background: #ffffff;
+    }
+    .content p {
+      margin: 0 0 16px 0;
+      font-size: 16px;
+      color: #333;
+    }
+    .info-box {
+      background: #e8f5e9;
+      border-left: 4px solid #00bf5f;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+    .cta-button {
+      display: inline-block;
+      background: #00bf5f;
+      color: white;
+      text-decoration: none;
+      padding: 16px 40px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 18px;
+      margin: 20px 0;
+      text-align: center;
+    }
+    .cta-button:hover {
+      background: #00a552;
+    }
+    .button-container {
+      text-align: center;
+      margin: 30px 0;
+    }
+    .security-note {
+      background: #f8f9fa;
+      padding: 16px;
+      margin: 20px 0;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #666;
+    }
+    .footer {
+      background: #000000;
+      color: #aaa;
+      padding: 30px;
+      text-align: center;
+      font-size: 13px;
+    }
+    .footer a {
+      color: #00bf5f;
+      text-decoration: none;
+    }
+    .footer a:hover {
+      text-decoration: underline;
+    }
+    .expiry-note {
+      color: #666;
+      font-size: 14px;
+      text-align: center;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="email-wrapper">
+    <div class="container">
+      <!-- Header -->
+      <div class="header">
+        <div class="logo-container">
+          <img src="https://app.seravault.com/seravault_logo_email_v2.png" alt="SeraVault" class="logo" width="400" />
+        </div>
+        <div class="icon">✉️</div>
+        <h1>Verify Your Email Address</h1>
+      </div>
+
+      <!-- Content -->
+      <div class="content">
+        <p>Hello {{displayName}},</p>
+        
+        <p>Thank you for signing up for SeraVault! To complete your registration and start using your secure document storage, please verify your email address.</p>
+
+        <div class="info-box">
+          <p style="margin: 0;"><strong>Why verify your email?</strong></p>
+          <ul style="margin: 10px 0 0 0; padding-left: 20px;">
+            <li>Secure your account</li>
+            <li>Enable password recovery</li>
+            <li>Receive important account notifications</li>
+          </ul>
+        </div>
+
+        <div class="button-container">
+          <a href="{{verificationLink}}" class="cta-button">Verify Email Address</a>
+        </div>
+
+        <p class="expiry-note">This link will expire in 24 hours.</p>
+
+        <div class="security-note">
+          <strong>🔒 Security Note</strong><br>
+          If you didn't create an account with SeraVault, please ignore this email or contact our support team if you have concerns.
+        </div>
+
+        <p style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0; color: #666; font-size: 14px;">
+          <strong>Button not working?</strong> Copy and paste this link into your browser:<br>
+          <a href="{{verificationLink}}" style="color: #00bf5f; word-break: break-all;">{{verificationLink}}</a>
+        </p>
+
+        <p style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0; color: #666; font-size: 14px;">
+          <strong>Need help?</strong> Contact our support team at <a href="mailto:support@seravault.com" style="color: #00bf5f;">support@seravault.com</a>
+        </p>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <p><strong>SeraVault</strong> - Secure Document Storage with End-to-End Encryption</p>
+        <p>
+          <a href="https://www.seravault.com">Website</a> • 
+          <a href="https://app.seravault.com">Dashboard</a> • 
+          <a href="https://www.seravault.com/support">Support</a>
+        </p>
+        <p style="margin-top: 20px;">© 2025 SeraVault. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,199 @@
+{
+  "name": "SeraVault - Tu Caja de Seguridad Digital",
+  "short_name": "SeraVault",
+  "description": "Tu caja de seguridad digital para contraseñas, tarjetas de crédito, claves criptográficas y documentos importantes. Protegido contra incendios, inundaciones, robos y miradas indiscretas con encriptación post-cuántica.",
+  "start_url": "/?utm_source=pwa&lang=es",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "background_color": "#0a0a0a",
+  "theme_color": "#667eea",
+  "lang": "es",
+  "dir": "ltr",
+  "scope": "/",
+  "orientation": "any",
+  "id": "com.seravault.app",
+  "categories": [
+    "productivity",
+    "security",
+    "utilities",
+    "finance",
+    "lifestyle"
+  ],
+  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
+  "screenshots": [
+    {
+      "src": "/screenshots/desktop/01-home.png",
+      "sizes": "1440x900",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Panel de SeraVault - Tu caja fuerte digital segura"
+    },
+    {
+      "src": "/screenshots/desktop/04-all-files.png",
+      "sizes": "1440x900",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Todos los archivos - Explora tus documentos cifrados"
+    },
+    {
+      "src": "/screenshots/desktop/07-security.png",
+      "sizes": "1440x900",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Seguridad - Estado del cifrado post-cuántico"
+    },
+    {
+      "src": "/screenshots/desktop/10-fab-open.png",
+      "sizes": "1440x900",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Acciones rápidas - Crea archivos, formularios, chats y sube contenido"
+    },
+    {
+      "src": "/screenshots/phone/01-home.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Panel móvil - Accede a tu caja fuerte desde cualquier lugar"
+    },
+    {
+      "src": "/screenshots/phone/04-all-files.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Todos los archivos - Tus documentos cifrados de un vistazo"
+    },
+    {
+      "src": "/screenshots/phone/05-contacts.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Contactos - Gestiona contactos de confianza de forma segura"
+    },
+    {
+      "src": "/screenshots/phone/06-templates.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Plantillas de formularios - Plantillas seguras integradas"
+    },
+    {
+      "src": "/screenshots/phone/10-fab-open.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Acciones rápidas - Nueva carpeta, formulario, chat o subida"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Subir Archivos",
+      "short_name": "Subir",
+      "description": "Sube nuevos archivos de forma segura",
+      "url": "/?action=upload&lang=es",
+      "icons": [
+        {
+          "src": "/icons/upload-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Nueva Contraseña",
+      "short_name": "Contraseña",
+      "description": "Crea un nuevo formulario de contraseña",
+      "url": "/?action=new-password&lang=es",
+      "icons": [
+        {
+          "src": "/icons/password-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Nueva Tarjeta de Crédito",
+      "short_name": "Tarjeta",
+      "description": "Guarda una nueva tarjeta de crédito",
+      "url": "/?action=new-card&lang=es",
+      "icons": [
+        {
+          "src": "/icons/card-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "file",
+          "accept": [
+            "image/*",
+            "application/pdf",
+            "text/*",
+            "application/*"
+          ]
+        }
+      ]
+    }
+  },
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

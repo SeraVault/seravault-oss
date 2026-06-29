@@ -1,0 +1,10 @@
+# Allow PWA metadata files (needed for app stores and PWA analysis tools like PWABuilder)
+# Block all other paths (app content is behind authentication)
+User-agent: *
+Allow: /manifest.webmanifest
+Allow: /manifest.
+Allow: /sw.js
+Allow: /icon-192x192.png
+Allow: /icon-512x512.png
+Allow: /favicon.ico
+Disallow: /

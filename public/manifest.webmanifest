@@ -1,0 +1,194 @@
+{
+  "name": "SeraVault - Your Digital Safe Deposit Box",
+  "short_name": "SeraVault",
+  "description": "Your digital safe deposit box for passwords, credit cards, crypto keys, and important documents. Protected from fire, flood, theft, and prying eyes with post-quantum encryption.",
+  "start_url": "/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "background_color": "#0a0a0a",
+  "theme_color": "#667eea",
+  "lang": "en",
+  "dir": "ltr",
+  "scope": "/",
+  "orientation": "any",
+  "id": "com.seravault.app",
+  "categories": [
+    "finance",
+    "medical",
+    "productivity",
+    "security",
+    "social",
+    "utilities"
+  ],
+  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "share_target": {
+    "action": "/?share-target",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "file",
+          "accept": ["image/*", "application/pdf", "text/*", ".doc", ".docx", ".xls", ".xlsx"]
+        }
+      ]
+    }
+  },
+  "screenshots": [
+    {
+      "src": "/screenshots/desktop/01-home.png",
+      "sizes": "1440x900",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "SeraVault Dashboard - Your secure file vault"
+    },
+    {
+      "src": "/screenshots/desktop/04-all-files.png",
+      "sizes": "1440x900",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "All Files - Browse and manage encrypted documents"
+    },
+    {
+      "src": "/screenshots/desktop/07-security.png",
+      "sizes": "1440x900",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Security Overview - Post-quantum encryption status"
+    },
+    {
+      "src": "/screenshots/desktop/10-fab-open.png",
+      "sizes": "1440x900",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Quick Actions - Create files, forms, chats and upload"
+    },
+    {
+      "src": "/screenshots/phone/01-home.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Mobile Dashboard - Access your vault on the go"
+    },
+    {
+      "src": "/screenshots/phone/04-all-files.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "All Files - Your encrypted documents at a glance"
+    },
+    {
+      "src": "/screenshots/phone/05-contacts.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Contacts - Securely manage trusted contacts"
+    },
+    {
+      "src": "/screenshots/phone/06-templates.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Form Templates - Built-in secure form templates"
+    },
+    {
+      "src": "/screenshots/phone/10-fab-open.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Quick Actions - New folder, form, chat or upload"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Upload Files",
+      "short_name": "Upload",
+      "description": "Upload new files securely",
+      "url": "/?action=upload",
+      "icons": [
+        {
+          "src": "/icon-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "New Password",
+      "short_name": "Password",
+      "description": "Create a new password form",
+      "url": "/?action=new-password",
+      "icons": [
+        {
+          "src": "/icon-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "New Credit Card",
+      "short_name": "Card",
+      "description": "Store a new credit card",
+      "url": "/?action=new-card",
+      "icons": [
+        {
+          "src": "/icon-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

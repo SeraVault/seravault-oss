@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#006600" />
+    <meta name="description" content="Secure file storage with post-quantum encryption. Store documents, forms, and chat securely." />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="manifest" href="/manifest.es.webmanifest" hreflang="es" />
+    <link rel="manifest" href="/manifest.fr.webmanifest" hreflang="fr" />
+    <link rel="manifest" href="/manifest.de.webmanifest" hreflang="de" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <title>SeraVault</title>
+    <script>
+      // Immediate version check before any app code loads
+      (function() {
+        const APP_VERSION = '1.0.448';
+        const lastVersion = localStorage.getItem('app_version');
+        
+        if (lastVersion && lastVersion !== APP_VERSION) {
+          console.log('🔄 Version mismatch detected in HTML, clearing everything...');
+          
+          // Set new version FIRST to prevent reload loop
+          localStorage.setItem('app_version', APP_VERSION);
+          
+          // Clear localStorage except for essential items
+          const keep = ['app_version'];
+          const keys = Object.keys(localStorage);
+          keys.forEach(key => {
+            if (!keep.includes(key)) {
+              localStorage.removeItem(key);
+            }
+          });
+          
+          // Clear sessionStorage
+          sessionStorage.clear();
+          
+          // Perform async cleanup operations
+          const cleanupPromises = [];
+          
+          // Unregister service workers
+          if ('serviceWorker' in navigator) {
+            cleanupPromises.push(
+              navigator.serviceWorker.getRegistrations().then(regs => {
+                return Promise.all(regs.map(reg => reg.unregister()));
+              })
+            );
+          }
+          
+          // Clear all caches
+          if ('caches' in window) {
+            cleanupPromises.push(
+              caches.keys().then(names => {
+                return Promise.all(names.map(name => caches.delete(name)));
+              })
+            );
+          }
+          
+          // Wait for cleanup to complete, then reload
+          Promise.all(cleanupPromises).finally(() => {
+            // Force reload without any cache
+            window.location.href = window.location.href.split('?')[0] + '?nocache=' + Date.now();
+          });
+        } else {
+          localStorage.setItem('app_version', APP_VERSION);
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      // PWA service worker registration — kept inline so static analyzers
+      // (e.g. PWABuilder) can discover navigator.serviceWorker.register('/sw.js')
+      // without executing the app bundle.
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('/sw.js');
+        });
+      }
+    </script>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

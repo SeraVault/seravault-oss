@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bienvenido a SeraVault</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f5f5f5;
+    }
+    .email-wrapper {
+      width: 100%;
+      padding: 20px 0;
+      background-color: #f5f5f5;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .header {
+      background: #000000;
+      color: white;
+      padding: 40px 30px;
+      text-align: center;
+    }
+    .header .logo-container {
+      display: block;
+      margin-bottom: 20px;
+    }
+    .header .logo {
+      width: 400px;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 600;
+    }
+    .header .icon {
+      font-size: 48px;
+      margin-bottom: 10px;
+    }
+    .content {
+      padding: 40px 30px;
+    }
+    .content h2 {
+      color: #00bf5f;
+      font-size: 22px;
+      margin-top: 0;
+    }
+    .content p {
+      margin: 0 0 16px 0;
+      font-size: 16px;
+      color: #333;
+    }
+    .cta-section {
+      text-align: center;
+      margin: 32px 0;
+    }
+    .button {
+      display: inline-block;
+      background: #000000;
+      color: white !important;
+      padding: 16px 40px;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 16px;
+      box-shadow: 0 4px 12px rgba(0, 191, 95, 0.4);
+    }
+    .steps {
+      background: #000000;
+      padding: 24px;
+      border-radius: 8px;
+      margin: 24px 0;
+    }
+    .step {
+      margin: 20px 0;
+      padding-left: 50px;
+      position: relative;
+      min-height: 40px;
+    }
+    .step-number {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 36px;
+      height: 36px;
+      background: #00bf5f;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .step h3 {
+      margin: 0 0 8px 0;
+      font-size: 16px;
+      color: #333;
+    }
+    .step p {
+      margin: 0;
+      font-size: 14px;
+      color: #666;
+    }
+    .features {
+      background: #f0fff8;
+      padding: 24px;
+      border-radius: 8px;
+      margin: 24px 0;
+      border-left: 4px solid #00bf5f;
+    }
+    .features h3 {
+      margin: 0 0 16px 0;
+      color: #00bf5f;
+    }
+    .feature {
+      margin: 12px 0;
+      font-size: 15px;
+      color: #555;
+    }
+    .footer {
+      text-align: center;
+      padding: 30px;
+      background: #000000;
+      border-top: 1px solid #e0e0e0;
+    }
+    .footer p {
+      margin: 8px 0;
+      font-size: 13px;
+      color: #666;
+    }
+    @media only screen and (max-width: 600px) {
+      .container {
+        margin: 0 10px;
+      }
+      .header {
+        padding: 30px 20px;
+      }
+      .content {
+        padding: 30px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="email-wrapper">
+    <div class="container">
+      <!-- Header -->
+      <div class="header">
+        <div class="logo-container">
+          <img src="https://app.seravault.com/seravault_logo_email_v2.png" alt="SeraVault" class="logo" width="400" />
+        </div>
+        <h1>¡Bienvenido a SeraVault!</h1>
+      </div>
+
+      <!-- Main Content -->
+      <div class="content">
+        <p>Hola <strong>{{displayName}}</strong>,</p>
+        
+        <p>¡Gracias por unirte a SeraVault! Tu cuenta ya está configurada y lista para usar. Estamos emocionados de ayudarte a almacenar y compartir tus archivos con cifrado post-cuántico de nivel militar.</p>
+        
+        <div class="cta-section">
+          <a href="{{appUrl}}" class="button">Ir a tu bóveda</a>
+        </div>
+        
+        <!-- Getting Started Steps -->
+        <div class="steps">
+          <h2 style="margin-top: 0; color: #00bf5f;">Primeros pasos</h2>
+          
+          <div class="step">
+            <div class="step-number">1</div>
+            <h3>Genera tus claves de cifrado</h3>
+            <p>Crea tu par de claves seguras para comenzar a cifrar archivos. Elige entre frase de contraseña, llave de hardware, o ambos.</p>
+          </div>
+          
+          <div class="step">
+            <div class="step-number">2</div>
+            <h3>Sube tus archivos</h3>
+            <p>Arrastra y suelta archivos en tu bóveda. Se cifrarán automáticamente antes de subirse.</p>
+          </div>
+          
+          <div class="step">
+            <div class="step-number">3</div>
+            <h3>Invita contactos</h3>
+            <p>Comparte archivos de forma segura con otros. Cada archivo se cifra específicamente para cada destinatario.</p>
+          </div>
+          
+          <div class="step">
+            <div class="step-number">4</div>
+            <h3>Mantente seguro</h3>
+            <p>Mantén tu frase de contraseña segura y considera usar una llave de seguridad de hardware para máxima protección.</p>
+          </div>
+        </div>
+        
+        <!-- Security Features -->
+        <div class="features">
+          <h3>🔐 Tus datos están protegidos por:</h3>
+          <div class="feature">✓ Cifrado post-cuántico ML-KEM-768</div>
+          <div class="feature">✓ Arquitectura de conocimiento cero</div>
+          <div class="feature">✓ Soporte para llaves de seguridad de hardware</div>
+          <div class="feature">✓ Cifrado de extremo a extremo</div>
+          <div class="feature">✓ Cifrado del lado del cliente (tus archivos nunca salen sin cifrar)</div>
+        </div>
+        
+        <p><strong>¿Necesitas ayuda?</strong></p>
+        <p>Consulta nuestra documentación o contacta al soporte si tienes alguna pregunta. ¡Estamos aquí para ayudarte!</p>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <p>¡Bienvenido a bordo! 🚀</p>
+        <p style="margin-top: 20px;">
+          <a href="{{appUrl}}" style="color: #00bf5f; text-decoration: none;">Abrir SeraVault</a> • 
+          <a href="{{appUrl}}/profile" style="color: #00bf5f; text-decoration: none;">Configuración del perfil</a>
+        </p>
+        <p style="margin-top: 20px; font-size: 11px; color: #999;">
+          © 2025 SeraVault. Todos los derechos reservados.
+        </p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Start Server",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run dev",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Start Server (Dev Firebase)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run dev:firebase-dev",
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}

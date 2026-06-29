@@ -1,0 +1,45 @@
+# Ripgrep additional ignore rules (on top of .gitignore)
+# Prevents rg from crawling large/generated directories and hammering the machine
+
+# Dependencies — root and all nested
+node_modules/
+**/node_modules/
+
+# Firebase Functions dependencies (explicit, large)
+functions/node_modules/
+functions/lib/
+
+# Build outputs
+dist/
+dist-landing/
+dist-ssr/
+build/
+.next/
+.nuxt/
+
+# Firebase emulator/cache artifacts
+.firebase/
+*.log
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Caches
+.cache/
+.parcel-cache/
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+.eslintcache
+
+# Generated / binary-like
+*.min.js
+*.min.css
+*.map
+*.tgz
+*.lock
+package-lock.json
+yarn.lock
+pnpm-lock.yaml

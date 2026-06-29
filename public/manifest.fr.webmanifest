@@ -1,0 +1,199 @@
+{
+  "name": "SeraVault - Votre Coffre-Fort Numérique",
+  "short_name": "SeraVault",
+  "description": "Votre coffre-fort numérique pour les mots de passe, cartes bancaires, clés cryptographiques et documents importants. Protégé contre le feu, les inondations, le vol et les regards indiscrets avec un chiffrement post-quantique.",
+  "start_url": "/?utm_source=pwa&lang=fr",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "background_color": "#0a0a0a",
+  "theme_color": "#667eea",
+  "lang": "fr",
+  "dir": "ltr",
+  "scope": "/",
+  "orientation": "any",
+  "id": "com.seravault.app",
+  "categories": [
+    "productivity",
+    "security",
+    "utilities",
+    "finance",
+    "lifestyle"
+  ],
+  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
+  "screenshots": [
+    {
+      "src": "/screenshots/desktop/01-home.png",
+      "sizes": "1440x900",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Tableau de bord SeraVault - Votre coffre-fort numérique sécurisé"
+    },
+    {
+      "src": "/screenshots/desktop/04-all-files.png",
+      "sizes": "1440x900",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Tous les fichiers - Parcourez vos documents chiffrés"
+    },
+    {
+      "src": "/screenshots/desktop/07-security.png",
+      "sizes": "1440x900",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Sécurité - Statut du chiffrement post-quantique"
+    },
+    {
+      "src": "/screenshots/desktop/10-fab-open.png",
+      "sizes": "1440x900",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Actions rapides - Créez des fichiers, formulaires, chats et téléchargez"
+    },
+    {
+      "src": "/screenshots/phone/01-home.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Tableau de bord mobile - Accédez à votre coffre-fort en déplacement"
+    },
+    {
+      "src": "/screenshots/phone/04-all-files.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Tous les fichiers - Vos documents chiffrés en un coup d'œil"
+    },
+    {
+      "src": "/screenshots/phone/05-contacts.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Contacts - Gérez vos contacts de confiance en toute sécurité"
+    },
+    {
+      "src": "/screenshots/phone/06-templates.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Modèles de formulaires - Modèles sécurisés intégrés"
+    },
+    {
+      "src": "/screenshots/phone/10-fab-open.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Actions rapides - Nouveau dossier, formulaire, chat ou téléchargement"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Télécharger des Fichiers",
+      "short_name": "Télécharger",
+      "description": "Téléchargez de nouveaux fichiers en toute sécurité",
+      "url": "/?action=upload&lang=fr",
+      "icons": [
+        {
+          "src": "/icons/upload-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Nouveau Mot de Passe",
+      "short_name": "Mot de Passe",
+      "description": "Créer un nouveau formulaire de mot de passe",
+      "url": "/?action=new-password&lang=fr",
+      "icons": [
+        {
+          "src": "/icons/password-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Nouvelle Carte Bancaire",
+      "short_name": "Carte",
+      "description": "Enregistrer une nouvelle carte bancaire",
+      "url": "/?action=new-card&lang=fr",
+      "icons": [
+        {
+          "src": "/icons/card-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "file",
+          "accept": [
+            "image/*",
+            "application/pdf",
+            "text/*",
+            "application/*"
+          ]
+        }
+      ]
+    }
+  },
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

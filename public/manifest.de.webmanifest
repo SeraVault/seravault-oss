@@ -1,0 +1,199 @@
+{
+  "name": "SeraVault - Ihr Digitaler Tresor",
+  "short_name": "SeraVault",
+  "description": "Ihr digitaler Tresor für Passwörter, Kreditkarten, Krypto-Schlüssel und wichtige Dokumente. Geschützt vor Feuer, Überschwemmungen, Diebstahl und neugierigen Blicken mit Post-Quanten-Verschlüsselung.",
+  "start_url": "/?utm_source=pwa&lang=de",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "background_color": "#0a0a0a",
+  "theme_color": "#667eea",
+  "lang": "de",
+  "dir": "ltr",
+  "scope": "/",
+  "orientation": "any",
+  "id": "com.seravault.app",
+  "categories": [
+    "productivity",
+    "security",
+    "utilities",
+    "finance",
+    "lifestyle"
+  ],
+  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
+  "screenshots": [
+    {
+      "src": "/screenshots/desktop/01-home.png",
+      "sizes": "1440x900",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "SeraVault Dashboard - Ihr sicherer digitaler Tresor"
+    },
+    {
+      "src": "/screenshots/desktop/04-all-files.png",
+      "sizes": "1440x900",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Alle Dateien - Durchsuchen Sie Ihre verschlüsselten Dokumente"
+    },
+    {
+      "src": "/screenshots/desktop/07-security.png",
+      "sizes": "1440x900",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Sicherheit - Post-Quanten-Verschlüsselungsstatus"
+    },
+    {
+      "src": "/screenshots/desktop/10-fab-open.png",
+      "sizes": "1440x900",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Schnellaktionen - Dateien, Formulare, Chats erstellen und hochladen"
+    },
+    {
+      "src": "/screenshots/phone/01-home.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Mobiles Dashboard - Greifen Sie unterwegs auf Ihren Tresor zu"
+    },
+    {
+      "src": "/screenshots/phone/04-all-files.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Alle Dateien - Ihre verschlüsselten Dokumente auf einen Blick"
+    },
+    {
+      "src": "/screenshots/phone/05-contacts.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Kontakte - Vertrauenswürdige Kontakte sicher verwalten"
+    },
+    {
+      "src": "/screenshots/phone/06-templates.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Formularvorlagen - Integrierte sichere Formularvorlagen"
+    },
+    {
+      "src": "/screenshots/phone/10-fab-open.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Schnellaktionen - Neuer Ordner, Formular, Chat oder Upload"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Dateien Hochladen",
+      "short_name": "Hochladen",
+      "description": "Laden Sie neue Dateien sicher hoch",
+      "url": "/?action=upload&lang=de",
+      "icons": [
+        {
+          "src": "/icons/upload-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Neues Passwort",
+      "short_name": "Passwort",
+      "description": "Erstellen Sie ein neues Passwortformular",
+      "url": "/?action=new-password&lang=de",
+      "icons": [
+        {
+          "src": "/icons/password-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Neue Kreditkarte",
+      "short_name": "Karte",
+      "description": "Speichern Sie eine neue Kreditkarte",
+      "url": "/?action=new-card&lang=de",
+      "icons": [
+        {
+          "src": "/icons/card-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "file",
+          "accept": [
+            "image/*",
+            "application/pdf",
+            "text/*",
+            "application/*"
+          ]
+        }
+      ]
+    }
+  },
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

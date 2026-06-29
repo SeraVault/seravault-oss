@@ -1,0 +1,38 @@
+{
+  "fileShared": {
+    "title": "New file shared with you",
+    "message": "{{senderName}} shared a file with you"
+  },
+  "fileModified": {
+    "title": "Shared file updated",
+    "message": "{{senderName}} modified a shared file"
+  },
+  "contactRequest": {
+    "title": "New contact request",
+    "messageWithText": "{{senderName}} wants to connect with you: \"{{message}}\"",
+    "messageWithoutText": "{{senderName}} wants to connect with you"
+  },
+  "contactAccepted": {
+    "title": "Contact request accepted",
+    "message": "{{senderName}} accepted your contact request"
+  },
+  "fileShareRequest": {
+    "title": "File sharing request from unknown user",
+    "message": "{{senderName}} (not in your contacts) wants to share a file with you"
+  },
+  "chatMessage": {
+    "groupTitle": "New message in group chat",
+    "groupMessage": "{{senderName}} sent a message",
+    "individualTitle": "New message from {{senderName}}",
+    "individualMessage": "Click to view message"
+  },
+  "invitationAccepted": {
+    "title": "Invitation Accepted",
+    "message": "{{senderName}} accepted your invitation and is now a contact"
+  },
+  "userInvitation": {
+    "title": "{{senderName}} invited you to SeraVault",
+    "messageWithText": "\"{{message}}\"",
+    "messageWithoutText": "Join them on SeraVault for secure, encrypted collaboration"
+  }
+}

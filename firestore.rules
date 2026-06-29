@@ -1,0 +1,674 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper function to check if user has access to a resource
+    function hasAccess(resource) {
+      return request.auth != null && (
+        request.auth.uid == resource.data.owner ||
+        (resource.data.sharedWith is list && request.auth.uid in resource.data.sharedWith)
+      );
+    }
+
+    // Helper function to validate user owns the resource being created
+    function isOwner(resourceData) {
+      return request.auth != null && request.auth.uid == resourceData.owner;
+    }
+
+    // Helper function to ensure sharedWith array is properly formatted
+    function validSharedWith(sharedWith) {
+      return sharedWith is list &&
+             sharedWith.size() <= 100 && // Reasonable limit
+             request.auth.uid in sharedWith; // Creator must be in sharedWith list
+    }
+
+    // Users can read and write their own profile
+    match /users/{userId} {
+      // Get access to own profile
+      allow get: if request.auth != null && request.auth.uid == userId;
+
+      // Get access: authenticated users can read user profiles by email for sharing
+      // This allows reading public profile info (email, publicKey, displayName) needed for encryption and sharing
+      // Private keys are stored encrypted so this is safe
+      allow get: if request.auth != null;
+
+      // ✅ FIXED: List access for authenticated users
+      // WHERE clauses are evaluated server-side, so we safely allow list queries
+      allow list: if request.auth != null;
+
+      // Create: users can create their own profile
+      allow create: if request.auth != null && request.auth.uid == userId;
+
+      // Update: users can update their profile but NOT storage tracking fields
+      // storageUsed, firestoreUsed, storageUpdatedAt, firestoreUpdatedAt are managed by Cloud Functions only
+      allow update: if request.auth != null &&
+        request.auth.uid == userId &&
+        // Ensure storage tracking fields are not being modified by the user
+        (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['storageUsed', 'firestoreUsed', 'storageUpdatedAt', 'firestoreUpdatedAt'])) &&
+        // CRITICAL: Never allow publicKey to be deleted once set.
+        // publicKey is the root of all encryption — losing it means all encrypted data is permanently inaccessible.
+        // To change your keys, use the key regeneration flow which always writes a new publicKey.
+        (!('publicKey' in resource.data) || 'publicKey' in request.resource.data);
+
+      // Delete: users cannot delete their own profile (should be handled by Cloud Functions on account deletion)
+      allow delete: if false;
+
+      // Hardware security keys - user can manage their own keys
+      match /hardwareKeys/{keyDoc} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+
+      // FCM tokens for push notifications - user can manage their own tokens
+      match /fcmTokens/{tokenId} {
+        allow create: if request.auth != null &&
+          request.auth.uid == userId &&
+          request.resource.data.keys().hasAll(['token', 'createdAt']);
+
+        allow get, update, delete: if request.auth != null &&
+          request.auth.uid == userId;
+
+        // ✅ FIXED: Only allow listing own tokens
+        allow list: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+
+    // Folders - Owner and shared users can access
+    match /folders/{folderId} {
+      // Get access: owner or users the folder is shared with
+      allow get: if request.auth != null && (
+        request.auth.uid == resource.data.owner ||
+        (resource.data.sharedWith is list && request.auth.uid in resource.data.sharedWith)
+      );
+
+      // ✅ FIXED: List access for authenticated users
+      // WHERE clauses filter the query server-side, no need for additional checks
+      allow list: if request.auth != null;
+
+      // Write access: OWNER ONLY for deletion
+      allow delete: if request.auth != null &&
+        request.auth.uid == resource.data.owner;
+
+      // Update access: owner can update anything, shared users can only update their userFolders location
+      allow update: if request.auth != null && (
+        // Owner can update anything
+        request.auth.uid == resource.data.owner ||
+        // Shared users can only update their own userFolders location
+        (resource.data.sharedWith is list && 
+         request.auth.uid in resource.data.sharedWith &&
+         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['userFolders']) &&
+         request.resource.data.userFolders is map &&
+         request.auth.uid in request.resource.data.userFolders.keys() &&
+         resource.data.get('userFolders', {}).diff(request.resource.data.userFolders).affectedKeys().hasOnly([request.auth.uid]))
+      );
+
+      // Create access: must be owner
+      allow create: if request.auth != null &&
+        request.auth.uid == request.resource.data.owner &&
+        // Ensure required fields are present
+        request.resource.data.keys().hasAll(['owner', 'name', 'parent', 'createdAt']) &&
+        // Validate data types
+        request.resource.data.owner is string &&
+        (request.resource.data.parent == null || request.resource.data.parent is string) &&
+        // If sharedWith is provided, validate it
+        (!request.resource.data.keys().hasAny(['sharedWith']) || validSharedWith(request.resource.data.sharedWith));
+    }
+
+    // Files (including forms) - users can access files they own or files shared with them
+    match /files/{fileId} {
+      // Get access: owner or explicitly shared user
+      allow get: if hasAccess(resource);
+
+      // ✅ FIXED: List access for authenticated users
+      // WHERE clauses filter server-side: owner, sharedWith, etc.
+      allow list: if request.auth != null;
+
+      // Write access: only owner can modify most fields
+      allow update, delete: if request.auth != null &&
+        request.auth.uid == resource.data.owner;
+
+      // Allow users to remove themselves from sharedWith array (unshare operation)
+      allow update: if request.auth != null &&
+        hasAccess(resource) &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['sharedWith', 'lastModified']) &&
+        request.resource.data.sharedWith is list &&
+        // User must be removing themselves from the array
+        request.auth.uid in resource.data.sharedWith &&
+        !(request.auth.uid in request.resource.data.sharedWith) &&
+        // Can't remove the owner from sharedWith
+        resource.data.owner in request.resource.data.sharedWith;
+
+      // Allow users with access to archive/unarchive (add/remove self from archivedBy)
+      allow update: if request.auth != null &&
+        hasAccess(resource) &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['archivedBy']) &&
+        request.resource.data.archivedBy is list;
+
+      // Allow users with access to update only their favorite status (legacy field)
+      allow update: if request.auth != null &&
+        hasAccess(resource) &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['isFavorite', 'lastModified']) &&
+        request.resource.data.isFavorite is bool;
+
+      // Allow users with access to update their own favorite status in userFavorites
+      allow update: if request.auth != null &&
+        hasAccess(resource) &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['userFavorites', 'lastModified']) &&
+        request.resource.data.userFavorites is map &&
+        // Only allow modification of the user's own favorite status
+        request.auth.uid in request.resource.data.userFavorites.keys() &&
+        request.resource.data.userFavorites[request.auth.uid] is bool;
+
+      // Allow users with access to update their own folder association in userFolders
+      // This handles updates where the entire userFolders object is sent
+      allow update: if request.auth != null &&
+        hasAccess(resource) &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['userFolders', 'lastModified']) &&
+        request.resource.data.userFolders is map &&
+        // User must be updating their own folder entry
+        request.auth.uid in request.resource.data.userFolders.keys() &&
+        // All existing entries for other users must be preserved
+        // (Check that old userFolders, minus current user, equals new userFolders, minus current user)
+        resource.data.get('userFolders', {}).diff(request.resource.data.userFolders).affectedKeys().hasOnly([request.auth.uid]);
+
+      // Allow users with access to update their own encrypted tags in userTags
+      allow update: if request.auth != null &&
+        hasAccess(resource) &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['userTags']) &&
+        request.resource.data.userTags is map &&
+        // Only allow modification of the user's own encrypted tags
+        (request.resource.data.userTags.size() == resource.data.get('userTags', {}).size() ||
+         request.resource.data.userTags.size() == resource.data.get('userTags', {}).size() + 1) &&
+        // Ensure user can only modify their own entry and it's properly encrypted
+        request.auth.uid in request.resource.data.userTags.keys() &&
+        request.resource.data.userTags[request.auth.uid] is map &&
+        request.resource.data.userTags[request.auth.uid].keys().hasAll(['ciphertext', 'nonce']) &&
+        request.resource.data.userTags[request.auth.uid].ciphertext is string &&
+        request.resource.data.userTags[request.auth.uid].nonce is string;
+
+      // Allow users with access to update their own personalized name in userNames
+      allow update: if request.auth != null &&
+        hasAccess(resource) &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['userNames', 'lastModified']) &&
+        request.resource.data.userNames is map &&
+        // Only allow modification of the user's own personalized name
+        (request.resource.data.userNames.size() == resource.data.get('userNames', {}).size() ||
+         request.resource.data.userNames.size() == resource.data.get('userNames', {}).size() + 1) &&
+        // Ensure user can only modify their own entry and it's properly encrypted
+        request.auth.uid in request.resource.data.userNames.keys() &&
+        request.resource.data.userNames[request.auth.uid] is map &&
+        request.resource.data.userNames[request.auth.uid].keys().hasAll(['ciphertext', 'nonce']) &&
+        request.resource.data.userNames[request.auth.uid].ciphertext is string &&
+        request.resource.data.userNames[request.auth.uid].nonce is string;
+
+      // Create access: must be owner and include self in sharedWith
+      allow create: if isOwner(request.resource.data) &&
+        validSharedWith(request.resource.data.sharedWith) &&
+        // Ensure required fields are present for files/forms
+        (
+          // Regular files and forms
+          (request.resource.data.get('fileType', null) != 'chat' &&
+           request.resource.data.keys().hasAll(['owner', 'name', 'size', 'storagePath', 'encryptedKeys', 'sharedWith', 'createdAt'])) ||
+          // Chat files - adding validations back incrementally
+          (request.resource.data.fileType == 'chat' &&
+           request.resource.data.keys().hasAll(['owner', 'name', 'fileType', 'size', 'encryptedKeys', 'sharedWith', 'createdAt', 'participants', 'type', 'createdBy']) &&
+           request.resource.data.type in ['individual', 'group'] &&
+           request.resource.data.participants is list &&
+           request.resource.data.participants.size() >= 2 &&
+           request.auth.uid in request.resource.data.participants &&
+           request.resource.data.createdBy == request.auth.uid)
+        ) &&
+        // Validate data types
+        request.resource.data.owner is string &&
+        // StoragePath validation: required for regular files, optional/empty for chats
+        (request.resource.data.get('fileType', null) == 'chat' || request.resource.data.storagePath is string) &&
+        request.resource.data.encryptedKeys is map &&
+        // Ensure user has an encrypted key for the file
+        request.auth.uid in request.resource.data.encryptedKeys &&
+        // Parent folder validation (if specified) - not used for chats which use userFolders
+        (request.resource.data.get('fileType', null) == 'chat' ||
+         request.resource.data.parent == null ||
+         request.resource.data.parent is string) &&
+        // userFolders validation (if specified)
+        (!request.resource.data.keys().hasAny(['userFolders']) ||
+         (request.resource.data.userFolders is map &&
+          request.auth.uid in request.resource.data.userFolders.keys())) &&
+        // userFavorites validation (if specified)
+        (!request.resource.data.keys().hasAny(['userFavorites']) ||
+         (request.resource.data.userFavorites is map &&
+          request.auth.uid in request.resource.data.userFavorites.keys())) &&
+        // userNames validation (if specified)
+        (!request.resource.data.keys().hasAny(['userNames']) ||
+         (request.resource.data.userNames is map &&
+          request.auth.uid in request.resource.data.userNames.keys()));
+
+      // Allow chat participants to update lastMessageAt and lastModified timestamps
+      allow update: if request.auth != null &&
+        resource.data.fileType == 'chat' &&
+        resource.data.participants is list &&
+        request.auth.uid in resource.data.participants &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['lastMessageAt', 'lastModified']);
+
+      // Allow chat participants to leave (remove themselves from participants + sharedWith)
+      allow update: if request.auth != null &&
+        resource.data.get('fileType', null) == 'chat' &&
+        resource.data.participants is list &&
+        request.auth.uid in resource.data.participants &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['participants', 'sharedWith', 'lastModified']) &&
+        request.resource.data.participants is list &&
+        !(request.auth.uid in request.resource.data.participants) &&
+        resource.data.owner in request.resource.data.participants &&
+        request.resource.data.sharedWith is list &&
+        !(request.auth.uid in request.resource.data.sharedWith);
+
+      // Messages subcollection - for chat files only
+      // Messages are stored under files/{chatFileId}/messages/{messageId}
+      match /messages/{messageId} {
+        // Helper to check if user is a participant in the chat file
+        function isChatParticipant(fileId) {
+          return request.auth.uid in get(/databases/$(database)/documents/files/$(fileId)).data.participants;
+        }
+
+        // Read access: chat participants only
+        allow read: if request.auth != null &&
+          isChatParticipant(fileId);
+
+        // List access: chat participants can query messages
+        allow list: if request.auth != null &&
+          isChatParticipant(fileId);
+
+        // Create access: sender must be chat participant
+        allow create: if request.auth != null &&
+          request.resource.data.senderId == request.auth.uid &&
+          request.resource.data.keys().hasAll(['senderId', 'encryptedContent', 'timestamp', 'type']) &&
+          request.resource.data.type in ['text', 'file', 'system'] &&
+          isChatParticipant(fileId);
+
+        // Update access: sender can update their own messages, participants can update read receipts and reactions
+        allow update: if request.auth != null &&
+          isChatParticipant(fileId) &&
+          (
+            // Sender can edit their own message
+            (request.auth.uid == resource.data.senderId &&
+             request.resource.data.diff(resource.data).affectedKeys().hasOnly(['encryptedContent', 'editedAt'])) ||
+            // Participants can update read receipts for themselves
+            (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['readBy']) &&
+             request.resource.data.readBy is map &&
+             request.auth.uid in request.resource.data.readBy.keys()) ||
+            // Participants can add/remove emoji reactions
+            (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reactions']) &&
+             request.resource.data.reactions is map)
+          );
+
+        // Delete access: sender can delete their own messages
+        allow delete: if request.auth != null &&
+          request.auth.uid == resource.data.senderId &&
+          isChatParticipant(fileId);
+      }
+    }
+
+    // Groups - users can access groups they own or are members of
+    match /groups/{groupId} {
+      // Get access: owner or member (encrypted groups rely on memberKeys)
+      allow get: if request.auth != null && (
+        request.auth.uid == resource.data.owner ||
+        (resource.data.members is list && request.auth.uid in resource.data.members) ||
+        (resource.data.isEncrypted == true && resource.data.memberKeys is map && request.auth.uid in resource.data.memberKeys.keys())
+      );
+
+      // ✅ FIXED: List access for authenticated users
+      // Client queries filter by owner or membership server-side
+      allow list: if request.auth != null;
+
+      // Write access: only owner can modify
+      allow update, delete: if request.auth != null &&
+        request.auth.uid == resource.data.owner;
+
+      // Create access: must be owner
+      allow create: if isOwner(request.resource.data) &&
+        // Ensure required fields
+        request.resource.data.keys().hasAll(['owner', 'name', 'members', 'createdAt', 'updatedAt']) &&
+        // For encrypted groups, check memberKeys contains owner
+        (request.resource.data.isEncrypted != true ||
+         (request.resource.data.memberKeys is map && request.auth.uid in request.resource.data.memberKeys.keys())) &&
+        // For unencrypted groups, check members list contains owner
+        (request.resource.data.isEncrypted == true ||
+         (request.resource.data.members is list && request.auth.uid in request.resource.data.members && request.resource.data.members.size() <= 50));
+    }
+
+    // Sharing History - users can only access their own sharing history
+    match /sharingHistory/{historyId} {
+      // Get access: only owner
+      allow get: if request.auth != null &&
+        request.auth.uid == resource.data.owner;
+
+      // List access: owner can list their own sharing history
+      allow list: if request.auth != null && request.query.limit <= 100;
+
+      // Write access: only owner can modify
+      allow update, delete: if request.auth != null &&
+        request.auth.uid == resource.data.owner;
+
+      // Create access: must be owner
+      allow create: if isOwner(request.resource.data) &&
+        // Ensure required fields
+        request.resource.data.keys().hasAll(['owner', 'sharedWith', 'sharedAt', 'type']) &&
+        // Validate data types
+        request.resource.data.owner is string &&
+        request.resource.data.sharedWith is string &&
+        request.resource.data.type in ['user', 'group'];
+    }
+
+    // Form Templates - public templates accessible by all, private templates by owner/shared users
+    match /formTemplates/{templateId} {
+      // Helper function to check if user can access template
+      function canAccessTemplate(templateData) {
+        return templateData.isPublic == true ||
+               request.auth.uid == templateData.author ||
+               (templateData.sharedWith is list && request.auth.uid in templateData.sharedWith);
+      }
+
+      // Get access: public templates, owned templates, or shared templates
+      allow get: if request.auth != null && canAccessTemplate(resource.data);
+
+      // List access: allow any authenticated user to query (real-time subscriptions don't use limit)
+      allow list: if request.auth != null;
+
+      // Write access: only template author can modify
+      allow update, delete: if request.auth != null &&
+        request.auth.uid == resource.data.author;
+
+      // Create access: must be author
+      allow create: if request.auth != null &&
+        request.auth.uid == request.resource.data.author &&
+        request.resource.data.author is string &&
+        // Encrypted templates: require encryptedData + encryptedKeys
+        (
+          (
+            request.resource.data.isEncrypted == true &&
+            request.resource.data.keys().hasAll(['encryptedData', 'encryptedKeys', 'author', 'isPublic', 'createdAt', 'updatedAt']) &&
+            request.resource.data.encryptedData is map &&
+            request.resource.data.encryptedKeys is map
+          )
+          ||
+          // Legacy plain-text templates (backward compatibility)
+          (
+            !request.resource.data.keys().hasAny(['isEncrypted']) &&
+            request.resource.data.keys().hasAll(['name', 'author', 'isPublic', 'isOfficial', 'schema', 'defaultData', 'usageCount', 'createdAt', 'updatedAt']) &&
+            request.resource.data.name is string &&
+            request.resource.data.isPublic is bool &&
+            request.resource.data.isOfficial is bool &&
+            request.resource.data.schema is map &&
+            request.resource.data.defaultData is map &&
+            request.resource.data.usageCount is number &&
+            (request.resource.data.isOfficial == false || request.auth.token.admin == true)
+          )
+        ) &&
+        request.resource.data.isPublic is bool &&
+        (!request.resource.data.keys().hasAny(['sharedWith']) ||
+         (request.resource.data.sharedWith is list && request.resource.data.sharedWith.size() <= 100));
+    }
+
+    // Custom Templates - users can manage their own templates, read public ones
+    match /customTemplates/{templateId} {
+      // Helper function to check if user can access template
+      function canAccessCustomTemplate(templateData) {
+        return templateData.isPublic == true ||
+               request.auth.uid == templateData.userId;
+      }
+
+      // Get access: public templates or owned templates
+      allow get: if request.auth != null && canAccessCustomTemplate(resource.data);
+
+      // List access: allow authenticated users to query templates
+      // Public templates are OK to list
+      allow list: if request.auth != null &&
+        request.query.limit <= 100;
+
+      // Write access: only template owner can modify
+      allow update, delete: if request.auth != null &&
+        request.auth.uid == resource.data.userId;
+
+      // Create access: must be owner
+      allow create: if request.auth != null &&
+        request.auth.uid == request.resource.data.userId &&
+        // Ensure required fields
+        request.resource.data.keys().hasAll(['templateId', 'name', 'userId', 'isCustom', 'schema', 'created', 'modified']) &&
+        // Validate data types
+        request.resource.data.templateId is string &&
+        request.resource.data.name is string &&
+        request.resource.data.userId is string &&
+        request.resource.data.isCustom == true &&
+        request.resource.data.schema is map &&
+        // Validate that isPublic is boolean if present
+        (!request.resource.data.keys().hasAny(['isPublic']) || request.resource.data.isPublic is bool) &&
+        // Custom templates can never be official
+        (!request.resource.data.keys().hasAny(['isOfficial']) || request.resource.data.isOfficial == false);
+    }
+
+    // Notifications - users can only read their own, creation restricted to server-side
+    match /notifications/{notificationId} {
+      // Get access: recipient can read individual notifications
+      allow get: if request.auth != null &&
+        request.auth.uid == resource.data.recipientId;
+
+      // List access: allow any authenticated user to list their own notifications.
+      // The query MUST include where('recipientId','==',request.auth.uid) so only
+      // the caller's own notifications are ever returned.
+      allow list: if request.auth != null &&
+        request.query.limit <= 100;
+
+      // Write access: NO client-side creation allowed - only Cloud Functions
+      // Users can only update their own notifications to mark as read
+      allow update: if request.auth != null &&
+        request.auth.uid == resource.data.recipientId &&
+        // Only allow updating isRead and readAt fields
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['isRead', 'readAt']) &&
+        request.resource.data.isRead == true;
+
+      // Create/Delete: DENIED - only Cloud Functions can create/delete notifications
+      allow create, delete: if false;
+    }
+
+    // Contacts - users can manage their contact relationships
+    match /contacts/{contactId} {
+      // Contact ID format: {smallerUserId}_{largerUserId}
+      function isValidContactId() {
+        let userIds = contactId.split('_');
+        return userIds.size() == 2 &&
+               (request.auth.uid == userIds[0] || request.auth.uid == userIds[1]) &&
+               userIds[0] < userIds[1]; // Ensure proper ordering
+      }
+
+      function isParticipant(contactData) {
+        return request.auth.uid == contactData.userId1 ||
+               request.auth.uid == contactData.userId2;
+      }
+
+      function userCanAccessContactId() {
+        let userIds = contactId.split('_');
+        return userIds.size() == 2 &&
+               (request.auth.uid == userIds[0] || request.auth.uid == userIds[1]);
+      }
+
+      // Get access: participants can read their contacts (including non-existent ones)
+      allow get: if request.auth != null &&
+        userCanAccessContactId();
+
+      // List access: restricted to contacts the authenticated user is a participant of
+      allow list: if request.auth != null && (
+        resource.data.userId1 == request.auth.uid ||
+        resource.data.userId2 == request.auth.uid
+      );
+
+      // Write access: participants can update contact status
+      allow update: if request.auth != null &&
+        isValidContactId() &&
+        isParticipant(resource.data) &&
+        // Only allow updating specific fields
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'blockedAt', 'blockedByUserId', 'lastInteractionAt', 'metadata']) &&
+        // Status must be valid
+        request.resource.data.status in ['accepted', 'blocked'] &&
+        // If blocking, must be done by authenticated user
+        (request.resource.data.status != 'blocked' || request.resource.data.blockedByUserId == request.auth.uid);
+
+      // Create access: must involve authenticated user and have proper structure
+      allow create: if request.auth != null &&
+        isValidContactId() &&
+        isParticipant(request.resource.data) &&
+        // Ensure required fields (allow additional optional fields like acceptedAt, blockedAt, blockedByUserId, metadata)
+        request.resource.data.keys().hasAll(['userId1', 'userId2', 'user1Email', 'user2Email', 'user1DisplayName', 'user2DisplayName', 'status', 'initiatorUserId', 'createdAt', 'lastInteractionAt']) &&
+        // Validate data types and values
+        request.resource.data.userId1 is string &&
+        request.resource.data.userId2 is string &&
+        request.resource.data.status in ['accepted', 'blocked'] &&
+        // Authenticated user must be either participant (not just initiator)
+        (request.auth.uid == request.resource.data.userId1 || request.auth.uid == request.resource.data.userId2) &&
+        // If blocking, blockedByUserId must be the authenticated user
+        (request.resource.data.status != 'blocked' ||
+         (request.resource.data.keys().hasAll(['blockedAt', 'blockedByUserId']) &&
+          request.resource.data.blockedByUserId == request.auth.uid)) &&
+        // Ensure proper user ID ordering
+        request.resource.data.userId1 < request.resource.data.userId2;
+
+      // Delete access: participants can remove contact relationships
+      allow delete: if request.auth != null &&
+        isValidContactId() &&
+        isParticipant(resource.data);
+    }
+
+    // Contact Requests - unified collection for both registered user requests and email invitations
+    match /contactRequests/{requestId} {
+      // Get access:
+      // - Sender can read their own requests
+      // - Recipient (registered user) can read by toUserId
+      // - ANY authenticated user can read a specific request if they know the ID (needed for acceptance flow)
+      allow get: if request.auth != null;
+
+      // List access: restricted to requests where the authenticated user is sender or recipient
+      allow list: if request.auth != null && (
+        resource.data.fromUserId == request.auth.uid ||
+        resource.data.toUserId == request.auth.uid ||
+        (request.auth.token.email != null &&
+         request.auth.token.email.lower() == resource.data.get('toEmail', '').lower())
+      );
+
+      // Create access: sender must be the authenticated user
+      allow create: if request.auth != null &&
+        request.auth.uid == request.resource.data.fromUserId;
+
+      // Write access:
+      // - Registered recipient can accept/decline using toUserId
+      // - Email recipient can accept using email match
+      // - Sender can update their own requests
+      // - ANY authenticated user can accept if they set themselves as acceptor (for invitations)
+      allow update: if request.auth != null && (
+        // Sender can update their own requests
+        request.auth.uid == resource.data.fromUserId ||
+        // Registered recipient can accept/decline
+        (resource.data.toUserId != null && request.auth.uid == resource.data.toUserId &&
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'respondedAt']) &&
+          request.resource.data.status in ['accepted', 'declined']) ||
+        // Email recipient (invitation) can accept
+        (request.auth.token.email != null && request.auth.token.email.lower() == resource.data.toEmail.lower()) ||
+        // ANY authenticated user can accept an invitation if they set themselves as the acceptor
+        (
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'acceptedAt', 'acceptedByUserId']) &&
+          request.resource.data.status == 'accepted' &&
+          request.resource.data.acceptedByUserId == request.auth.uid
+        )
+      );
+
+      // Delete access: sender can delete their own requests
+      allow delete: if request.auth != null &&
+        request.auth.uid == resource.data.fromUserId;
+    }
+
+    // Contact Settings - users can manage their own contact settings
+    match /contactSettings/{userId} {
+      // Read/Write access: only the user themselves
+      allow read, write: if request.auth != null &&
+        request.auth.uid == userId;
+
+      // Create access: must be for authenticated user
+      allow create: if request.auth != null &&
+        request.auth.uid == userId &&
+        request.resource.data.userId == userId &&
+        // Ensure required fields
+        request.resource.data.keys().hasAll(['userId', 'autoAcceptDomains', 'autoAcceptFromContacts', 'allowFileShareFromUnknown', 'blockUnknownUsers', 'notifyOnContactRequest', 'notifyOnFileShareFromUnknown', 'updatedAt']) &&
+        // Validate data types
+        request.resource.data.autoAcceptDomains is list &&
+        request.resource.data.autoAcceptFromContacts is bool &&
+        request.resource.data.allowFileShareFromUnknown is bool &&
+        request.resource.data.blockUnknownUsers is bool &&
+        request.resource.data.notifyOnContactRequest is bool &&
+        request.resource.data.notifyOnFileShareFromUnknown is bool;
+    }
+
+    // User Invitations - invitations to non-existing users
+    match /userInvitations/{invitationId} {
+      // Read access:
+      // - Sender can read their own invitations
+      // - Recipient can read by email
+      // - ANY authenticated user can read a specific invitation if they know the ID (needed for acceptance flow)
+      allow get: if request.auth != null;
+
+      // ✅ FIXED: List access for authenticated users
+      // WHERE clauses filter by fromUserId or toEmail server-side
+      allow list: if request.auth != null;
+
+      // Create access: sender must be the authenticated user
+      allow create: if request.auth != null &&
+        request.auth.uid == request.resource.data.fromUserId;
+
+      // Update access:
+      // - Sender can update their own invitations
+      // - Recipient (matched by email) can accept the invitation
+      // - ANY authenticated user can accept if they set themselves as the acceptor (Bearer token pattern)
+      allow update: if request.auth != null && (
+        request.auth.uid == resource.data.fromUserId ||
+        (request.auth.token.email != null && request.auth.token.email.lower() == resource.data.toEmail.lower()) ||
+        (
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'acceptedAt', 'acceptedByUserId']) &&
+          request.resource.data.status == 'accepted' &&
+          request.resource.data.acceptedByUserId == request.auth.uid
+        )
+      );
+
+      // Delete access: sender can delete their own invitations
+      allow delete: if request.auth != null &&
+        request.auth.uid == resource.data.fromUserId;
+    }
+
+    // Waitlist - written server-side by the joinWaitlist Cloud Function (Admin SDK).
+    // No direct client writes allowed; read restricted to admins.
+    match /waitlist/{entryId} {
+      // All writes go through the joinWaitlist Cloud Function (Admin SDK bypasses these rules).
+      allow create, update, delete: if false;
+
+      // Only authenticated users (admins) can read waitlist entries
+      allow read: if request.auth != null;
+    }
+
+    // Active Chat Sessions - Track which chats users have open to prevent notifications
+    match /activeChatSessions/{sessionId} {
+      // Users can only manage their own sessions
+      allow create, update: if request.auth != null &&
+        request.resource.data.userId == request.auth.uid;
+
+      // Users can delete their own sessions
+      allow delete: if request.auth != null &&
+        resource.data.userId == request.auth.uid;
+
+      // ✅ FIXED: Only Cloud Functions need to read (via service account), not all authenticated users
+      // Users can read their own sessions
+      allow read: if request.auth != null &&
+        (resource == null || resource.data.userId == request.auth.uid);
+    }
+
+
+    // Deny all other access - explicit security
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

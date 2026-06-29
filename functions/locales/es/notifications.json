@@ -1,0 +1,38 @@
+{
+  "fileShared": {
+    "title": "Nuevo archivo compartido contigo",
+    "message": "{{senderName}} compartió un archivo contigo"
+  },
+  "fileModified": {
+    "title": "Archivo compartido actualizado",
+    "message": "{{senderName}} modificó un archivo compartido"
+  },
+  "contactRequest": {
+    "title": "Nueva solicitud de contacto",
+    "messageWithText": "{{senderName}} quiere conectarse contigo: \"{{message}}\"",
+    "messageWithoutText": "{{senderName}} quiere conectarse contigo"
+  },
+  "contactAccepted": {
+    "title": "Solicitud de contacto aceptada",
+    "message": "{{senderName}} aceptó tu solicitud de contacto"
+  },
+  "fileShareRequest": {
+    "title": "Solicitud para compartir archivo de usuario desconocido",
+    "message": "{{senderName}} (no está en tus contactos) quiere compartir un archivo contigo"
+  },
+  "chatMessage": {
+    "groupTitle": "Nuevo mensaje en chat grupal",
+    "groupMessage": "{{senderName}} envió un mensaje",
+    "individualTitle": "Nuevo mensaje de {{senderName}}",
+    "individualMessage": "Haz clic para ver el mensaje"
+  },
+  "invitationAccepted": {
+    "title": "Invitación Aceptada",
+    "message": "{{senderName}} aceptó tu invitación y ahora es un contacto"
+  },
+  "userInvitation": {
+    "title": "{{senderName}} te ha invitado a SeraVault",
+    "messageWithText": "\"{{message}}\"",
+    "messageWithoutText": "Únete a ellos en SeraVault para colaboración segura y encriptada"
+  }
+}

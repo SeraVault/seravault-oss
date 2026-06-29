@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Speicherkontingent-Warnung - SeraVault</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f5f5f5;
+    }
+    .email-wrapper {
+      width: 100%;
+      padding: 20px 0;
+      background-color: #f5f5f5;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .header {
+      background: #000000;
+      color: white;
+      padding: 40px 30px;
+      text-align: center;
+    }
+    .header .logo-container {
+      display: block;
+      margin-bottom: 20px;
+    }
+    .header .logo {
+      width: 400px;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 600;
+    }
+    .header .icon {
+      font-size: 48px;
+      margin-bottom: 10px;
+    }
+    .content {
+      padding: 40px 30px;
+      background: #ffffff;
+    }
+    .content p {
+      margin: 0 0 16px 0;
+      font-size: 16px;
+      color: #333;
+    }
+    .warning-box {
+      background: #fff3cd;
+      border-left: 4px solid #ff6b35;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+    .warning-box strong {
+      color: #d84315;
+      font-size: 18px;
+      display: block;
+      margin-bottom: 10px;
+    }
+    .stats-box {
+      background: #f8f9fa;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+      border: 1px solid #e0e0e0;
+    }
+    .stats-box .stat {
+      display: flex;
+      justify-content: space-between;
+      margin: 8px 0;
+      padding: 8px 0;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    .stats-box .stat:last-child {
+      border-bottom: none;
+    }
+    .stats-box .stat-label {
+      font-weight: 600;
+      color: #555;
+    }
+    .stats-box .stat-value {
+      color: #d84315;
+      font-weight: 600;
+    }
+    .options {
+      margin: 30px 0;
+    }
+    .option {
+      background: #f8f9fa;
+      padding: 16px;
+      margin: 12px 0;
+      border-radius: 8px;
+      border-left: 3px solid #00bf5f;
+    }
+    .option strong {
+      color: #00bf5f;
+      display: block;
+      margin-bottom: 6px;
+    }
+    .cta-button {
+      display: inline-block;
+      background: #00bf5f;
+      color: white;
+      text-decoration: none;
+      padding: 14px 32px;
+      border-radius: 8px;
+      font-weight: 600;
+      margin: 20px 0;
+      text-align: center;
+    }
+    .cta-button:hover {
+      background: #00a552;
+    }
+    .button-container {
+      text-align: center;
+      margin: 30px 0;
+    }
+    .footer {
+      background: #000000;
+      color: #aaa;
+      padding: 30px;
+      text-align: center;
+      font-size: 13px;
+    }
+    .footer a {
+      color: #00bf5f;
+      text-decoration: none;
+    }
+    .footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="email-wrapper">
+    <div class="container">
+      <!-- Header -->
+      <div class="header">
+        <div class="logo-container">
+          <img src="https://app.seravault.com/seravault_logo_email_v2.png" alt="SeraVault" class="logo" width="400" />
+        </div>
+        <div class="icon">⚠️</div>
+        <h1>Speicherkontingent-Warnung</h1>
+      </div>
+
+      <!-- Content -->
+      <div class="content">
+        <p>Hallo {{displayName}},</p>
+        
+        <div class="warning-box">
+          <strong>⚠️ Ihr Speicher Überschreitet die Grenzen des kostenlosen Plans</strong>
+          <p>Ihr Abonnement wurde kürzlich gekündigt oder auf den kostenlosen Plan herabgestuft. Ihre aktuelle Speichernutzung überschreitet das Kontingent des kostenlosen Plans.</p>
+        </div>
+
+        <div class="stats-box">
+          <div class="stat">
+            <span class="stat-label">Aktuelle Nutzung:</span>
+            <span class="stat-value">{{currentUsage}}</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Grenze des kostenlosen Plans:</span>
+            <span class="stat-value">{{freeLimit}}</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Kontingent-Überschreitung:</span>
+            <span class="stat-value">{{overageAmount}}</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Verbleibende Tage:</span>
+            <span class="stat-value">{{daysRemaining}} Tage</span>
+          </div>
+        </div>
+
+        <p><strong>Was passiert als nächstes:</strong></p>
+        <ul>
+          <li>Sie können keine neuen Dateien hochladen, bis Ihr Speicher unter der Grenze des kostenlosen Plans liegt</li>
+          <li>Alle vorhandenen Dateien bleiben noch <strong>{{daysRemaining}} Tage</strong> zugänglich</li>
+          <li>Nach {{daysRemaining}} Tagen werden Dateien, die das Kontingent überschreiten, dauerhaft gelöscht</li>
+          <li>Dateien werden gelöscht, beginnend mit den ältesten, bis Sie unter dem Limit sind</li>
+        </ul>
+
+        <p><strong>Ihre Optionen:</strong></p>
+
+        <div class="options">
+          <div class="option">
+            <strong>Option 1: Laden Sie Ihre Daten herunter</strong>
+            <p>Laden Sie Ihre Dateien herunter, bevor sie gelöscht werden. Besuchen Sie Ihr Dashboard, um alle Dateien auf einmal zu exportieren.</p>
+          </div>
+
+          <div class="option">
+            <strong>Option 2: Dateien löschen</strong>
+            <p>Löschen Sie manuell Dateien, die Sie nicht mehr benötigen, um unter das {{freeLimit}} Limit des kostenlosen Plans zu kommen.</p>
+          </div>
+
+          <div class="option">
+            <strong>Option 3: Upgrade Ihres Plans</strong>
+            <p>Abonnieren Sie erneut einen kostenpflichtigen Plan, um alle Ihre Dateien zu behalten und mehr Speicher zu erhalten.</p>
+          </div>
+        </div>
+
+        <div class="button-container">
+          <a href="{{dashboardLink}}" class="cta-button">Verwalten Sie Ihren Speicher</a>
+        </div>
+
+        <p style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0; color: #666; font-size: 14px;">
+          <strong>Benötigen Sie Hilfe?</strong> Kontaktieren Sie unser Support-Team unter <a href="mailto:support@seravault.com">support@seravault.com</a> oder besuchen Sie unser <a href="https://www.seravault.com/support">Hilfecenter</a>.
+        </p>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <p><strong>SeraVault</strong> - Sichere Dokumentenspeicherung mit Ende-zu-Ende-Verschlüsselung</p>
+        <p>
+          <a href="https://www.seravault.com">Website</a> • 
+          <a href="https://app.seravault.com">Dashboard</a> • 
+          <a href="https://www.seravault.com/support">Support</a>
+        </p>
+        <p style="margin-top: 20px;">© 2025 SeraVault. Alle Rechte vorbehalten.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

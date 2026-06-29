@@ -1,0 +1,67 @@
+# Supabase Configuration for Seravault
+# https://supabase.com/docs/guides/cli/config
+
+project_id = "seravault"
+
+[api]
+# Port to use for the API URL.
+port = 54321
+# Schemas to expose in the API.
+schemas = ["public", "storage"]
+# Extra schemas to add to the search_path of every request.
+extra_search_path = ["public"]
+# Max rows returned by queries.
+max_rows = 1000
+
+[db]
+# Port to use for the local database URL.
+port = 54322
+# The database major version to use.
+major_version = 17
+
+[studio]
+# Port to use for Supabase Studio.
+port = 54323
+
+[auth]
+# Enable/disable auth service.
+enabled = true
+# External URL of the site (for OAuth redirects).
+site_url = "http://localhost:5173"
+# Additional redirect URLs (for production, staging, etc.)
+additional_redirect_urls = ["https://localhost:5173"]
+# JWT expiry in seconds.
+jwt_expiry = 3600
+# Allow/disallow new user signups.
+enable_signup = true
+
+[auth.email]
+# Enable/disable signup with email.
+enable_signup = true
+# Enable/disable email confirmation.
+enable_confirmations = false
+
+# OAuth providers configuration
+[auth.external.google]
+enabled = true
+client_id = "env(SUPABASE_AUTH_GOOGLE_CLIENT_ID)"
+secret = "env(SUPABASE_AUTH_GOOGLE_SECRET)"
+
+[auth.external.apple]
+enabled = true
+client_id = "env(SUPABASE_AUTH_APPLE_CLIENT_ID)"
+secret = "env(SUPABASE_AUTH_APPLE_SECRET)"
+
+[storage]
+# Enable/disable storage service.
+enabled = true
+# The maximum file size in MiB (default: 50).
+file_size_limit = "50MiB"
+
+[realtime]
+# Enable/disable realtime service.
+enabled = true
+
+[analytics]
+# Enable/disable analytics.
+enabled = false

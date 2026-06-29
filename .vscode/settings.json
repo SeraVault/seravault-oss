@@ -1,0 +1,47 @@
+{
+  // Directories VS Code's rg-backed search won't touch
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/functions/node_modules": true,
+    "**/functions/lib": true,
+    "**/dist": true,
+    "**/dist-landing": true,
+    "**/dist-ssr": true,
+    "**/build": true,
+    "**/.firebase": true,
+    "**/.cache": true,
+    "**/.parcel-cache": true,
+    "**/.rpt2_cache": true,
+    "**/coverage": true,
+    "**/.nyc_output": true,
+    "**/*.map": true,
+    "**/*.min.js": true,
+    "**/*.min.css": true,
+    "**/package-lock.json": true,
+    "**/yarn.lock": true,
+    "**/pnpm-lock.yaml": true
+  },
+
+  // File watcher exclusions — prevents rg/inotify thrashing on large dirs
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/functions/node_modules/**": true,
+    "**/functions/lib/**": true,
+    "**/dist/**": true,
+    "**/dist-landing/**": true,
+    "**/.firebase/**": true,
+    "**/coverage/**": true,
+    "**/.cache/**": true
+  },
+
+  // Cap search results to avoid runaway memory use
+  "search.maxResults": 5000,
+
+  // Don't follow symlinks (can cause infinite loops in node_modules)
+  "search.followSymlinks": false,
+
+  // Use .gitignore and .rgignore automatically
+  "search.useIgnoreFiles": true,
+  "search.useGlobalIgnoreFiles": true,
+  "search.useParentIgnoreFiles": true
+}

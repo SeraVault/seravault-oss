@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Advertencia de Cuota de Almacenamiento - SeraVault</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f5f5f5;
+    }
+    .email-wrapper {
+      width: 100%;
+      padding: 20px 0;
+      background-color: #f5f5f5;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .header {
+      background: #000000;
+      color: white;
+      padding: 40px 30px;
+      text-align: center;
+    }
+    .header .logo-container {
+      display: block;
+      margin-bottom: 20px;
+    }
+    .header .logo {
+      width: 400px;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 600;
+    }
+    .header .icon {
+      font-size: 48px;
+      margin-bottom: 10px;
+    }
+    .content {
+      padding: 40px 30px;
+      background: #ffffff;
+    }
+    .content p {
+      margin: 0 0 16px 0;
+      font-size: 16px;
+      color: #333;
+    }
+    .warning-box {
+      background: #fff3cd;
+      border-left: 4px solid #ff6b35;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+    .warning-box strong {
+      color: #d84315;
+      font-size: 18px;
+      display: block;
+      margin-bottom: 10px;
+    }
+    .stats-box {
+      background: #f8f9fa;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+      border: 1px solid #e0e0e0;
+    }
+    .stats-box .stat {
+      display: flex;
+      justify-content: space-between;
+      margin: 8px 0;
+      padding: 8px 0;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    .stats-box .stat:last-child {
+      border-bottom: none;
+    }
+    .stats-box .stat-label {
+      font-weight: 600;
+      color: #555;
+    }
+    .stats-box .stat-value {
+      color: #d84315;
+      font-weight: 600;
+    }
+    .options {
+      margin: 30px 0;
+    }
+    .option {
+      background: #f8f9fa;
+      padding: 16px;
+      margin: 12px 0;
+      border-radius: 8px;
+      border-left: 3px solid #00bf5f;
+    }
+    .option strong {
+      color: #00bf5f;
+      display: block;
+      margin-bottom: 6px;
+    }
+    .cta-button {
+      display: inline-block;
+      background: #00bf5f;
+      color: white;
+      text-decoration: none;
+      padding: 14px 32px;
+      border-radius: 8px;
+      font-weight: 600;
+      margin: 20px 0;
+      text-align: center;
+    }
+    .cta-button:hover {
+      background: #00a552;
+    }
+    .button-container {
+      text-align: center;
+      margin: 30px 0;
+    }
+    .footer {
+      background: #000000;
+      color: #aaa;
+      padding: 30px;
+      text-align: center;
+      font-size: 13px;
+    }
+    .footer a {
+      color: #00bf5f;
+      text-decoration: none;
+    }
+    .footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="email-wrapper">
+    <div class="container">
+      <!-- Header -->
+      <div class="header">
+        <div class="logo-container">
+          <img src="https://app.seravault.com/seravault_logo_email_v2.png" alt="SeraVault" class="logo" width="400" />
+        </div>
+        <div class="icon">⚠️</div>
+        <h1>Advertencia de Cuota de Almacenamiento</h1>
+      </div>
+
+      <!-- Content -->
+      <div class="content">
+        <p>Hola {{displayName}},</p>
+        
+        <div class="warning-box">
+          <strong>⚠️ Su Almacenamiento Excede los Límites del Plan Gratuito</strong>
+          <p>Su suscripción fue cancelada o degradada recientemente al plan gratuito. Su uso actual de almacenamiento excede la cuota del plan gratuito.</p>
+        </div>
+
+        <div class="stats-box">
+          <div class="stat">
+            <span class="stat-label">Uso Actual:</span>
+            <span class="stat-value">{{currentUsage}}</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Límite del Plan Gratuito:</span>
+            <span class="stat-value">{{freeLimit}}</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Exceso de Cuota:</span>
+            <span class="stat-value">{{overageAmount}}</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Días Restantes:</span>
+            <span class="stat-value">{{daysRemaining}} días</span>
+          </div>
+        </div>
+
+        <p><strong>Qué sucede a continuación:</strong></p>
+        <ul>
+          <li>No puede subir nuevos archivos hasta que su almacenamiento esté por debajo del límite del plan gratuito</li>
+          <li>Todos los archivos existentes permanecen accesibles durante <strong>{{daysRemaining}} días más</strong></li>
+          <li>Después de {{daysRemaining}} días, los archivos que excedan la cuota serán eliminados permanentemente</li>
+          <li>Los archivos se eliminarán comenzando por los más antiguos hasta que esté por debajo del límite</li>
+        </ul>
+
+        <p><strong>Sus opciones:</strong></p>
+
+        <div class="options">
+          <div class="option">
+            <strong>Opción 1: Descargar Sus Datos</strong>
+            <p>Descargue sus archivos antes de que sean eliminados. Visite su panel de control para exportar todos los archivos de una vez.</p>
+          </div>
+
+          <div class="option">
+            <strong>Opción 2: Eliminar Archivos</strong>
+            <p>Elimine manualmente los archivos que ya no necesita para estar por debajo del límite de {{freeLimit}} del plan gratuito.</p>
+          </div>
+
+          <div class="option">
+            <strong>Opción 3: Actualizar Su Plan</strong>
+            <p>Vuelva a suscribirse a un plan de pago para conservar todos sus archivos y obtener más almacenamiento.</p>
+          </div>
+        </div>
+
+        <div class="button-container">
+          <a href="{{dashboardLink}}" class="cta-button">Administrar Su Almacenamiento</a>
+        </div>
+
+        <p style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0; color: #666; font-size: 14px;">
+          <strong>¿Necesita ayuda?</strong> Contacte a nuestro equipo de soporte en <a href="mailto:support@seravault.com">support@seravault.com</a> o visite nuestro <a href="https://www.seravault.com/support">Centro de Ayuda</a>.
+        </p>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <p><strong>SeraVault</strong> - Almacenamiento Seguro de Documentos con Cifrado de Extremo a Extremo</p>
+        <p>
+          <a href="https://www.seravault.com">Sitio Web</a> • 
+          <a href="https://app.seravault.com">Panel de Control</a> • 
+          <a href="https://www.seravault.com/support">Soporte</a>
+        </p>
+        <p style="margin-top: 20px;">© 2025 SeraVault. Todos los derechos reservados.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

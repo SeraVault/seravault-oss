@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "com.seravault.app.twa",
+        "sha256_cert_fingerprints": ["FB:76:1D:58:98:84:2E:48:44:6E:BC:F5:B0:4B:A6:6C:75:AE:BD:73:1D:87:5E:40:0E:E3:FA:E5:F3:AC:08:D1"]
+      }
+    }]
